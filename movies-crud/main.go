@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -51,6 +52,50 @@ func deleteMovie(w http.ResponseWriter, r *http.Request) {
 		if movie.Id == params["id"] {
 			movies = append(movies[:index], movies[index+1:]...)
 			break
+		}
+	}
+	json.NewEncoder(w).Encode(movies)
+}
+
+func getMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for _, movie := range movies {
+		if movie.Id == params["id"] {
+			json.NewEncoder(w).Encode(movie)
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(&Movie{})
+}
+
+func createMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var movie Movie
+	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	movie.Id = strconv.Itoa(len(movies) + 1)
+	movies = append(movies, movie)
+	json.NewEncoder(w).Encode(movie)
+}
+
+func updateMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, movie := range movies {
+		if movie.Id == params["id"] {
+			movies = append(movies[:index], movies[index+1:]...)
+			var movie Movie
+			if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+				http.Error(w, "Invalid request body", http.StatusBadRequest)
+				return
+			}
+			movie.Id = params["id"]
+			movies = append(movies, movie)
+			json.NewEncoder(w).Encode(movie)
+			return
 		}
 	}
 	json.NewEncoder(w).Encode(movies)
