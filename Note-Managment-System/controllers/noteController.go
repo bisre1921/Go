@@ -15,7 +15,7 @@ func GetNotes(c *gin.Context) {
 	c.JSON(http.StatusOK, notes)
 }
 
-func GetNoteById(c *gin.Context) {
+func GetNoteByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
@@ -50,13 +50,13 @@ func UpdateNoteByID(c *gin.Context) {
 	}
 
 	for i, note := range notes {
-		if note.ID == id {
+		if note.Id == id {
 			if err := c.ShouldBindJSON(&notes[i]); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 				return
 			}
 
-			notes[i].ID = id // Keep the ID unchanged
+			notes[i].Id = id // Keep the ID unchanged
 			c.JSON(http.StatusOK, notes[i])
 			return
 		}
@@ -73,7 +73,7 @@ func DeleteNoteByID(c *gin.Context) {
 	}
 
 	for i, note := range notes {
-		if note.ID == id {
+		if note.Id == id {
 			notes = append(notes[:i], notes[i+1:]...) // Remove the note
 			c.JSON(http.StatusOK, gin.H{"message": "Note deleted"})
 			return
