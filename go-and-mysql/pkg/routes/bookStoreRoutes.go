@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/gorilla/mux"
 	"go-and-mysql/pkg/controllers"
+
+	"github.com/gorilla/mux"
 )
 
 // SetBookStoreRoutes sets the routes for the book store
