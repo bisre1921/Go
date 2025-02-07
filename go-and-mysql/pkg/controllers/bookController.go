@@ -5,6 +5,9 @@ import (
 	"go-and-mysql/pkg/config"
 	"go-and-mysql/pkg/models"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 // CreateBook creates a new book
@@ -55,5 +58,24 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(books)
+}
+
+// GetBook gets a single book
+func GetBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	var book models.Book
+	err := config.DB.QueryRow("SELECT * FROM bookings WHERE id = ?", id).Scan(&book.ID, &book.Name, &book.Email, &book.Phone, &book.BookingDate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(book)
 
 }
