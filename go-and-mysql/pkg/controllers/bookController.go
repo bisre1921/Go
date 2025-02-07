@@ -79,3 +79,30 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(book)
 
 }
+
+// UpdateBook updates a book
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().set("content-Type", "application/json")
+	params := mux.Vars(r)
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	var book models.Book
+	err := json.NewDecoder(r.Body).Decode(&book)
+	if err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	_, err = config.DB.Exec("UPDATE bookings SET name = ?, email = ?, phone = ?, booking_date = ? WHERE id = ?", book.Name, book.Email, book.Phone, book.BookingDate, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	book.ID = id
+	json.NewEncoder(w).Encode(book)
+}
