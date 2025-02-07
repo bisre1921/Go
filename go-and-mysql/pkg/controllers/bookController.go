@@ -106,3 +106,22 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	book.ID = id
 	json.NewEncoder(w).Encode(book)
 }
+
+// DeleteBook deletes a book
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().set("content-Type", "application/json")
+	params := mux.Vars(r)
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	_, err = config.DB.Exec("DELETE FROM bookings WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Write([]byte("Booking deleted"))
+}
