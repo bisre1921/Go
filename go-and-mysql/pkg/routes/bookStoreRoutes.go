@@ -7,7 +7,9 @@ import (
 )
 
 // SetBookStoreRoutes sets the routes for the book store API
-func SetBookStoreRoutes(router *mux.Router) *mux.Router {
+func SetBookStoreRoutes() *mux.Router {
+	router := mux.NewRouter()
+
 	router.HandleFunc("/api/bookstore", controllers.CreateBook).Methods("POST")
 	router.HandleFunc("/api/bookstore", controllers.GetBooks).Methods("GET")
 	router.HandleFunc("/api/bookstore/{id}", controllers.GetBook).Methods("GET")
