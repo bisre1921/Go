@@ -13,14 +13,14 @@ import (
 // CreateBook creates a new book
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var book models.Book
+	var book models.Booking
 	err := json.NewDecoder(r.Body).Decode(&book)
 	if err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 
-	result, err := config.DB.Exec("INSERT INTO bookings (name, email, phone, booking_date) VALUES (?, ?, ?, ?)", book.Name, book.Email, book.Phone, book.BookingDate)
+	result, err := config.DB.Exec("INSERT INTO bookings (name, email, phone) VALUES (?, ?, ?)", book.Name, book.Email, book.Phone)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -38,8 +38,8 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 // Get all bookings
 func GetBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().set("Content-Type", "application/json")
-	var books []models.Book
+	w.Header().Set("Content-Type", "application/json")
+	var books []models.Booking
 	rows, err := config.DB.Query("SELECT * FROM bookings")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -48,8 +48,8 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var book models.Book
-		err := rows.Scan(&book.ID, &book.Name, &book.Email, &book.Phone, &book.BookingDate)
+		var book models.Booking
+		err := rows.Scan(&book.ID, &book.Name, &book.Email, &book.Phone)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -62,7 +62,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 
 // GetBook gets a single book
 func GetBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -70,8 +70,8 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var book models.Book
-	err := config.DB.QueryRow("SELECT * FROM bookings WHERE id = ?", id).Scan(&book.ID, &book.Name, &book.Email, &book.Phone, &book.BookingDate)
+	var book models.Booking
+	err = config.DB.QueryRow("SELECT * FROM bookings WHERE id = ?", id).Scan(&book.ID, &book.Name, &book.Email, &book.Phone)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -82,7 +82,7 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 // UpdateBook updates a book
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().set("content-Type", "application/json")
+	w.Header().Set("content-Type", "application/json")
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -90,14 +90,14 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var book models.Book
-	err := json.NewDecoder(r.Body).Decode(&book)
+	var book models.Booking
+	err = json.NewDecoder(r.Body).Decode(&book)
 	if err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 
-	_, err = config.DB.Exec("UPDATE bookings SET name = ?, email = ?, phone = ?, booking_date = ? WHERE id = ?", book.Name, book.Email, book.Phone, book.BookingDate, id)
+	_, err = config.DB.Exec("UPDATE bookings SET name = ?, email = ?, phone = ? WHERE id = ?", book.Name, book.Email, book.Phone, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -109,7 +109,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 // DeleteBook deletes a book
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().set("content-Type", "application/json")
+	w.Header().Set("content-Type", "application/json")
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
