@@ -1,25 +1,27 @@
 package main
 
-
+import (
+	"fmt"
+)
 
 func main() {
 	// Array
 	var a [5]int
 	a[2] = 7
-	println(a[2])
-	println(a[3])
+	fmt.Println(a[2])
+	fmt.Println(a[3])
 
 	// Array literal
 	b := [5]int{1, 2, 3, 4, 5}
-	println(b[2])
-	println(b[3])
+	fmt.Println(b[2])
+	fmt.Println(b[3])
 
 	// Array length
-	println(len(b))
+	fmt.Println(len(b))
 
 	// Array of arrays
 	c := [2][3]int{{1, 2, 3}, {4, 5, 6}}
-	println(c[1][2])
-	println(c[0][1])
-	println(c[1][0])
+	fmt.Println(c[1][2])
+	fmt.Println(c[0][1])
+	fmt.Println(c[1][0])
 }
