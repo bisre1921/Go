@@ -28,4 +28,9 @@ func main() {
 	fmt.Println(len(numbers))
 	fmt.Println(cap(numbers))
 
+	//how to remove an element from a slice based on index
+	index := 2
+	fruits = append(fruits[:index], fruits[index+1:]...)
+	fmt.Println(fruits)
+
 }
