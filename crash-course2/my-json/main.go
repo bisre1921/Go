@@ -15,7 +15,8 @@ type course struct {
 
 func main() {
 	fmt.Println("json")
-	EncodeJson()
+	// EncodeJson()
+	DecodeJson()
 }
 
 func EncodeJson() {
@@ -31,4 +32,38 @@ func EncodeJson() {
 		fmt.Println(err)
 	}
 	fmt.Printf("%s\n", finalJson)
+}
+
+func DecodeJson() {
+	jsonData := `[
+		{
+			"coursename": "Docker",
+			"Price": 100,
+			"website": "Udemy",
+			"Password": "password",
+			"Tags": ["docker", "container"]
+		},
+		{
+			"coursename": "Kubernetes",
+			"Price": 100,
+			"website": "Udemy",
+			"Password": "password",
+			"Tags": ["k8s", "container"]
+		},
+		{
+			"coursename": "Jenkins",
+			"Price": 100,
+			"website": "Udemy",
+			"Password": "password",
+			"Tags": ["ci", "cd"]
+		}
+	]`
+
+	var c []course
+	err := json.Unmarshal([]byte(jsonData), &c)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(c)
+
 }
