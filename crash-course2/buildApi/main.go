@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -24,7 +26,7 @@ type Author struct {
 var courses []Course
 
 func (c *Course) IsEmpty() bool {
-	return c.ID == "" && c.Title == ""
+	return c.Title == ""
 }
 
 func main() {
@@ -53,5 +55,33 @@ func getOneCourse(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	json.NewEncoder(w).Encode("Course not found with the given id")
+	return
+}
+
+func createCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("create course")
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Body == nil {
+		http.Error(w, "Please send a request body", http.StatusBadRequest)
+		return
+	}
+
+	var course Course
+	err := json.NewDecoder(r.Body).Decode(&course)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if course.IsEmpty() {
+		http.Error(w, "Please send a valid course", http.StatusBadRequest)
+		return
+	}
+
+	// generate a random id
+	course.ID = strconv.Itoa(rand.Intn(1000))
+	courses = append(courses, course)
+	json.NewEncoder(w).Encode(course)
 	return
 }
