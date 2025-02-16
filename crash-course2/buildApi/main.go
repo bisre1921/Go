@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 )
 
 type Course struct {
@@ -25,4 +27,14 @@ func (c *Course) IsEmpty() bool {
 
 func main() {
 	fmt.Println("courses api")
+}
+
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("<h1>Welcome to courses api</h1>"))
+}
+
+func getAllCourses(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("get all courses")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(courses)
 }
