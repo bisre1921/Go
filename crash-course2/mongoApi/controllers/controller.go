@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"mongoApi/models"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -25,4 +27,12 @@ func init() {
 	collection = client.Database(dbName).Collection(collectionName)
 	fmt.Println("Collection instance created!")
 
+}
+
+func insertOne(movie models.Movie) {
+	insertResult, err := collection.InsertOne(context.Background(), movie)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
 }
