@@ -36,6 +36,7 @@ func insertOne(movie models.Movie) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Inserted a Single Record ", insertResult)
 	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
 }
 
@@ -47,5 +48,29 @@ func updateOneMovie(movieId string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Updated a Single Record ", result)
 	fmt.Println("Updated a Single Record ", result.UpsertedID)
+}
+
+func deleteOneMovie(movieId string) {
+	id, _ := primitive.ObjectIDFromHex(movieId)
+	filter := bson.M{"_id": id}
+	result, err := collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Deleted a Single Record ", result)
+	fmt.Println("Deleted a Single Record ", result.DeletedCount)
+}
+
+func dleteAllMovies() int64 {
+	filter := bson.M{}
+	result, err := collection.DeleteMany(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Deleted all Record ", result)
+	fmt.Println("Deleted all Record ", result.DeletedCount)
+
+	return result.DeletedCount
 }
