@@ -7,6 +7,7 @@ import (
 	"log"
 	"mongoApi/models"
 	"net/http"
+	"github.com/gorilla/mux"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -106,4 +107,24 @@ func GetAllMovies(w http.ResponseWriter, r *http.Request) {
 	movies := getAllMovies()
 	fmt.Println(movies)
 	json.NewEncoder(w).Encode(movies)
+}
+
+func CreateMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+
+	var movie models.Movie
+	_ = json.NewDecoder(r.Body).Decode(&movie)
+	insertOne(movie)
+	json.NewEncoder(w).Encode(movie)
+}
+
+func MarkAsWatched(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "PUT")
+
+	params := mux.Vars(r)
+	movieId := params["id"]
+	updateOneMovie(movieId)
+	json.NewEncoder(w).Encode(movieId)s
 }
