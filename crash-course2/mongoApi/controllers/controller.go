@@ -7,6 +7,7 @@ import (
 	"log"
 	"mongoApi/models"
 	"net/http"
+
 	"github.com/gorilla/mux"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -66,7 +67,7 @@ func deleteOneMovie(movieId string) {
 	fmt.Println("Deleted a Single Record ", result.DeletedCount)
 }
 
-func dleteAllMovies() int64 {
+func deleteAllMovies() int64 {
 	filter := bson.M{}
 	result, err := collection.DeleteMany(context.Background(), filter)
 	if err != nil {
@@ -126,5 +127,23 @@ func MarkAsWatched(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	movieId := params["id"]
 	updateOneMovie(movieId)
-	json.NewEncoder(w).Encode(movieId)s
+	json.NewEncoder(w).Encode(movieId)
+}
+
+func DeleteOneMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
+
+	params := mux.Vars(r)
+	movieId := params["id"]
+	deleteOneMovie(movieId)
+	json.NewEncoder(w).Encode(movieId)
+}
+
+func DeleteAllMovies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
+
+	count := deleteAllMovies()
+	json.NewEncoder(w).Encode(count)
 }
